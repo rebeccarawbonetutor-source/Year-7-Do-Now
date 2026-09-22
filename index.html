@@ -182,12 +182,12 @@
             <option value="7-1-6">7-1-6</option>
         </select>
 
-        <button onclick="rollQuestions()">🎲 Roll Questions</button>
+        <button onclick="rollQuestions()">Roll Questions</button>
 
         <div class="timer-container">
             ⏱️ <span id="timer-display">05:00</span>
-            <button id="timer-btn" onclick="toggleTimer()" style="background-color: #4a5568; padding: 4px 10px; font-size: 0.9rem;">Start</button>
-            <button onclick="resetTimer()" style="background-color: #718096; padding: 4px 10px; font-size: 0.9rem;">Reset</button>
+            <button id="timer-btn" onclick="toggleTimer()">Start</button>
+            <button onclick="resetTimer()">Reset</button>
         </div>
     </div>
 
@@ -222,34 +222,37 @@
 
         const curriculum = {
             "Year 6": [
-                { q: "What are the six major world religions?", a: "Buddhism, Christianity, Hinduism, Islam, Judaism, and Sikhism." },
-                { q: "What is Humanism?", a: "A non-religious worldview where meaning and morality come from humans, not gods." },
-                { q: "What is atheism?", a: "The belief that no deities or gods exist." },
-                { q: "Name the special holy book used in Judaism.", a: "The Torah." },
-                { q: "Who do Muslims believe is the final prophet of God?", a: "Muhammad." }
-            ],
-            "7-1-1": [
-                { q: "What is an ultimate question?", a: "A big question about meaning, purpose or reality without an easy answer." },
-                { q: "Give one example of a big ultimate question.", a: "Why is there something rather than nothing? / What happens after death? / Does God exist?" },
-                { q: "What is a worldview?", a: "The way someone understands, interprets and responds to the world." },
-                { q: "What is animism?", a: "The belief that everything has a spirit, including animals, trees, rivers and the wind." },
-                { q: "What is polytheism?", a: "The belief in or worship of multiple gods." }
-            ],
-            "7-1-2": [
-                { q: "What does the word philosophy mean?", a: "Love of wisdom." },
-                { q: "What is a belief?", a: "Something which someone feels certain is true." },
-                { q: "When does a belief become knowledge?", a: "When you feel certain it is true and you can justify or explain why." },
-                { q: "Who was the Greek philosopher who loved to ask questions?", a: "Socrates." },
-                { q: "What did Socrates think people should do with their beliefs?", a: "They should question them and test their ideas." }
-            ],
-            "7-1-3": [
-                { q: "Did Plato think we should trust our eyes and hands to find the truth?", a: "No, he thought our physical senses are an unreliable source of reality." },
-                { q: "In Plato's story, what do the trapped prisoners look at all day?", a: "Shadows (or flat shapes) on the cave wall." },
-                { q: "What do the prisoners think about the shadows?", a: "They think the shadows are real life." },
-                { q: "What did the escaped prisoner discover about the shadows?", a: "That they are not real; they are just a trick or reflection." },
-                { q: "What must we use instead of our eyes to find true reality?", a: "Our mind or reason." }
-            ],
-            "7-1-4": [
-                { q: "Did Aristotle think we should use our senses to look at the real world?", a: "Yes, he believed we could gain true knowledge by observing the physical world." },
-                { q: "What did Aristotle mean by common sense?", a: "The ability to draw information from all of our physical senses together." },
-                { q: "What physical material is an acorn made of?", a: "Plant matter and wood." },
+                // Buddhism
+                { q: "Who founded Buddhism?", a: "Siddhartha Gautama (the Buddha)." },
+                { q: "What is the key symbol of Buddhism that represents the path to enlightenment?", a: "The Eight-Spoked Wheel (Dharmachakra)." },
+                { q: "What do Buddhists call the state of perfect peace and freedom from suffering?", a: "Nirvana." },
+                { q: "Where do Buddhists go to worship and meditate?", a: "A Temple, Vihara, or Stupa." },
+                { q: "What is the key teaching in Buddhism about why life involves suffering?", a: "The Four Noble Truths." },
+                // Christianity
+                { q: "Who do Christians believe is the Son of God and Saviour of humanity?", a: "Jesus Christ." },
+                { q: "What is the holy book used by Christians?", a: "The Bible." },
+                { q: "Name the core Christian belief that God exists as three persons: Father, Son, and Holy Spirit.", a: "The Trinity." },
+                { q: "What is the main place of worship for Christians?", a: "A Church." },
+                { q: "Which major Christian festival celebrates the resurrection of Jesus?", a: "Easter." },
+                // Hinduism
+                { q: "What do Hindus call the continuous cycle of birth, death, and rebirth?", a: "Samsara." },
+                { q: "What is the ultimate goal in Hinduism, which means freeing the soul from rebirth?", a: "Moksha." },
+                { q: "What is the Hindu rule of cause and effect, where your actions affect your future life?", a: "Karma." },
+                { q: "What is the name for a Hindu place of worship?", a: "A Mandir (or Temple)." },
+                { q: "Name the ancient, sacred holy texts used in Hinduism.", a: "The Vedas." },
+                // Islam
+                { q: "What is the name of the one God in Islam?", a: "Allah." },
+                { q: "Who do Muslims believe is the final prophet of God?", a: "Muhammad." },
+                { q: "What is the holy book of Islam?", a: "The Qur'an." },
+                { q: "What is the name for a Muslim place of worship?", a: "A Mosque (Masjid)." },
+                { q: "What do we call the five core duties that every Muslim should follow?", a: "The Five Pillars of Islam." },
+                // Judaism
+                { q: "What is the name of the sacred agreement God made with Abraham in Judaism?", a: "The Covenant." },
+                { q: "What is the primary holy text and scroll used in Judaism?", a: "The Torah." },
+                { q: "What is the name for a Jewish place of worship?", a: "A Synagogue." },
+                { q: "What do we call the collection of moral laws given to Moses on Mount Sinai?", a: "The Ten Commandments." },
+                { q: "What is the name of the Jewish weekly day of rest and spiritual focus?", a: "Shabbat (Sabbath)." },
+                // Sikhism
+                { q: "Who was the founder of Sikhism?", a: "Guru Nanak." },
+                { q: "What is the name of the living eternal holy book and Guru in Sikhism?", a: "The Guru Granth Sahib." },
+                { q: "What is the name for a Sikh place of worship?", a: "A Gurdwara." },
