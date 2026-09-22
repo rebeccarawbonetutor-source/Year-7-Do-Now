@@ -1,258 +1,352 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Do Now Grid</title>
-    <style>
-        :root {
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-            --accent-color: #3498db;
-            --lesson-color: #e67e22;
-            --term-color: #9b59b6;
-            --year-color: #2ecc71;
-            --border-radius: 12px;
-        }
+Do Now Grid
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+:root {
+--bg-color: #f4f6f9;
+--card-bg: #ffffff;
+--text-color: #2c3e50;
+--accent-color: #3498db;
+--lesson-color: #e67e22;
+--term-color: #9b59b6;
+--year-color: #2ecc71;
+--border-radius: 12px;
+}
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: var(--bg-color);
+color: var(--text-color);
+margin: 0;
+padding: 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+min-height: 100vh;
+}
+h1 {
+font-size: 2.5rem;
+margin-bottom: 10px;
+text-align: center;
+}
+.controls {
+display: flex;
+gap: 15px;
+margin-bottom: 25px;
+flex-wrap: wrap;
+justify-content: center;
+align-items: center;
+background: var(--card-bg);
+padding: 15px 25px;
+border-radius: var(--border-radius);
+box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+label {
+font-weight: 600;
+}
+select, button {
+font-size: 1rem;
+padding: 8px 16px;
+border-radius: 6px;
+border: 1px solid #ccc;
+background: white;
+cursor: pointer;
+}
+button {
+background-color: var(--accent-color);
+color: white;
+border: none;
+font-weight: bold;
+transition: background 0.2s;
+}
+button:hover {
+background-color: #2980b9;
+}
+.timer-container {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 1.5rem;
+font-weight: bold;
+background: #edf2f7;
+padding: 5px 15px;
+border-radius: 8px;
+}
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 20px;
+width: 100%;
+max-width: 1200px;
+margin-top: 10px;
+}
+.card {
+background: var(--card-bg);
+border-radius: var(--border-radius);
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+padding: 25px;
+display: flex;
+flex-direction: column;
+min-height: 250px;
+cursor: pointer;
+position: relative;
+transition: transform 0.2s, box-shadow 0.2s;
+border-top: 8px solid var(--accent-color);
+user-select: none;
+}
+.card:hover {
+transform: translateY(-5px);
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.card.last-lesson { border-top-color: var(--lesson-color); }
+.card.last-term { border-top-color: var(--term-color); }
+.card.last-year { border-top-color: var(--year-color); }
+.card-tag {
+font-size: 0.9rem;
+text-transform: uppercase;
+font-weight: bold;
+letter-spacing: 1px;
+margin-bottom: 15px;
+color: #718096;
+}
+.card.last-lesson .card-tag { color: var(--lesson-color); }
+.card.last-term .card-tag { color: var(--term-color); }
+.card.last-year .card-tag { color: var(--year-color); }
+.question {
+font-size: 1.4rem;
+font-weight: 600;
+line-height: 1.4;
+margin-bottom: 20px;
+flex-grow: 1;
+}
+.answer-box {
+background: #f7fafc;
+border: 2px dashed #e2e8f0;
+border-radius: 8px;
+padding: 15px;
+font-size: 1.2rem;
+font-weight: 500;
+color: #4a5568;
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 60px;
+}
+.card.revealed .answer-box {
+background: #f0fff4;
+border-color: #9ae6b4;
+color: #22543d;
+border-style: solid;
+}
+.click-hint {
+font-size: 0.8rem;
+color: #a0aec0;
+text-align: center;
+margin-top: 10px;
+}
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
+Do Now
+7-1-1
+7-1-2
+7-1-3
+7-1-4
+7-1-5
+7-1-6
+Roll Questions
+⏱️ 05:00
+Start
+Reset
 
-        label {
-            font-weight: 600;
-        }
+Last Lesson
+Loading...
+???
+Click box to reveal answer
+Last Term
+Loading...
+???
+Click box to reveal answer
+Year 6 Recap
+Loading...
+???
+Click box to reveal answer
 
-        select, button {
-            font-size: 1rem;
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            background: white;
-            cursor: pointer;
-        }
+const lessonSequence = ["7-1-1", "7-1-2", "7-1-3", "7-1-4", "7-1-5", "7-1-6"];
+const curriculum = {
+"Year 6": [
+// Buddhism
+{ q: "Who founded Buddhism?", a: "Siddhartha Gautama (the Buddha)." },
+{ q: "What is the key symbol of Buddhism that represents the path to enlightenment?", a: "The Eight-Spoked Wheel (Dharmachakra)." },
+{ q: "What do Buddhists call the state of perfect peace and freedom from suffering?", a: "Nirvana." },
+{ q: "Where do Buddhists go to worship and meditate?", a: "A Temple, Vihara, or Stupa." },
+{ q: "What is the key teaching in Buddhism about why life involves suffering?", a: "The Four Noble Truths." },
+// Christianity
+{ q: "Who do Christians believe is the Son of God and Saviour of humanity?", a: "Jesus Christ." },
+{ q: "What is the holy book used by Christians?", a: "The Bible." },
+{ q: "Name the core Christian belief that God exists as three persons: Father, Son, and Holy Spirit.", a: "The Trinity." },
+{ q: "What is the main place of worship for Christians?", a: "A Church." },
+{ q: "Which major Christian festival celebrates the resurrection of Jesus?", a: "Easter." },
+// Hinduism
+{ q: "What do Hindus call the continuous cycle of birth, death, and rebirth?", a: "Samsara." },
+{ q: "What is the ultimate goal in Hinduism, which means freeing the soul from rebirth?", a: "Moksha." },
+{ q: "What is the Hindu rule of cause and effect, where your actions affect your future life?", a: "Karma." },
+{ q: "What is the name for a Hindu place of worship?", a: "A Mandir (or Temple)." },
+{ q: "Name the ancient, sacred holy texts used in Hinduism.", a: "The Vedas." },
+// Islam
+{ q: "What is the name of the one God in Islam?", a: "Allah." },
+{ q: "Who do Muslims believe is the final prophet of God?", a: "Muhammad." },
+{ q: "What is the holy book of Islam?", a: "The Qur'an." },
+{ q: "What is the name for a Muslim place of worship?", a: "A Mosque (Masjid)." },
+{ q: "What do we call the five core duties that every Muslim should follow?", a: "The Five Pillars of Islam." },
+// Judaism
+{ q: "What is the name of the sacred agreement God made with Abraham in Judaism?", a: "The Covenant." },
+{ q: "What is the primary holy text and scroll used in Judaism?", a: "The Torah." },
+{ q: "What is the name for a Jewish place of worship?", a: "A Synagogue." },
+{ q: "What do we call the collection of moral laws given to Moses on Mount Sinai?", a: "The Ten Commandments." },
+{ q: "What is the name of the Jewish weekly day of rest and spiritual focus?", a: "Shabbat (Sabbath)." },
+// Sikhism
+{ q: "Who was the founder of Sikhism?", a: "Guru Nanak." },
+{ q: "What is the name of the living eternal holy book and Guru in Sikhism?", a: "The Guru Granth Sahib." },
+{ q: "What is the name for a Sikh place of worship?", a: "A Gurdwara." },
+{ q: "What do Sikhs call the free community kitchen where food is served to everyone fairly?", a: "The Langar." },
+{ q: "What do we call the five physical symbols worn by initiated Khalsa Sikhs?", a: "The 5 Ks (Kesh, Kangha, Kara, Kachera, Kirpan)." },
+// Humanism & Non-Religious
+{ q: "What is Humanism?", a: "A non-religious worldview where meaning and morality come from humans, not gods." },
+{ q: "What is atheism?", a: "The belief that no deities or gods exist." },
+{ q: "What is agnosticism?", a: "The view that it is impossible to know for certain whether a god exists." },
+{ q: "According to Humanism, where should humans look to understand how the universe works?", a: "Science and reason." },
+{ q: "How do Humanists believe people should decide what is right or wrong?", a: "By thinking about the consequences of their actions on other people and animals." }
+],
+"7-1-1": [
+{ q: "What is an ultimate question?", a: "A big question about meaning, purpose or reality without an easy answer." },
+{ q: "Give one example of a big ultimate question.", a: "Why is there something rather than nothing? / What happens after death? / Does God exist?" },
+{ q: "What is a worldview?", a: "The way someone understands, interprets and responds to the world." },
+{ q: "What is animism?", a: "The belief that everything has a spirit, including animals, trees, rivers and the wind." },
+{ q: "What is polytheism?", a: "The belief in or worship of multiple gods." }
+],
+"7-1-2": [
+{ q: "What does the word philosophy mean?", a: "Love of wisdom." },
+{ q: "What is a belief?", a: "Something which someone feels certain is true." },
+{ q: "When does a belief become knowledge?", a: "When you feel certain it is true and you can justify or explain why." },
+{ q: "Who was the Greek philosopher who loved to ask questions?", a: "Socrates." },
+{ q: "What did Socrates think people should do with their beliefs?", a: "They should question them and test their ideas." }
+],
+"7-1-3": [
+{ q: "Did Plato think we should trust our eyes and hands to find the truth?", a: "No, he thought our physical senses are an unreliable source of reality." },
+{ q: "In Plato's story, what do the trapped prisoners look at all day?", a: "Shadows (or flat shapes) on the cave wall." },
+{ q: "What do the prisoners think about the shadows?", a: "They think the shadows are real life." },
+{ q: "What did the escaped prisoner discover about the shadows?", a: "That they are not real; they are just a trick or reflection." },
+{ q: "What must we use instead of our eyes to find true reality?", a: "Our mind or reason." }
+],
+"7-1-4": [
+{ q: "Did Aristotle think we should use our senses to look at the real world?", a: "Yes, he believed we could gain true knowledge by observing the physical world." },
+{ q: "What did Aristotle mean by common sense?", a: "The ability to draw information from all of our physical senses together." },
+{ q: "What physical material is an acorn made of?", a: "Plant matter and wood." },
+{ q: "What is the final goal or purpose of an acorn?", a: "To crack open, grow roots, and sprout into a massive oak tree." },
+{ q: "What is the final goal or purpose of a bicycle?", a: "To transport someone from place to place." }
+],
+"7-1-5": [
+{ q: "What question would Socrates ask someone to test their worldview?", a: "How do you know that? / What do you mean when you say...?" },
+{ q: "Why did Socrates question people's definitions of words?", a: "Because he believed most people act out of ignorance without actually understanding ideas." },
+{ q: "What are people acting out of when they just repeat ideas without understanding them?", a: "Ignorance." },
+{ q: "What did Socrates keep doing until a person realised they were acting out of ignorance?", a: "He would keep asking deep, probing questions." },
+{ q: "What did Socrates say most people's unexamined worldviews were built on?", a: "Unexamined assumptions." }
+],
+"7-1-6": [
+{ q: "What did Socrates say we should do with our lives?", a: "We should examine life (the examined life)." },
+{ q: "Did Plato think our physical senses are reliable or unreliable?", a: "Unreliable." },
+{ q: "Did Aristotle think we could find true knowledge through our senses?", a: "Yes, if we check them against each other and use reason." },
+{ q: "Why do people have different worldviews?", a: "Because they interpret their observations and ultimate questions in distinct ways." },
+{ q: "Why is there no single right answer to an ultimate question?", a: "Because they are big conceptual questions that cannot be physically proven true or false." }
+]
+};
+let currentData = { b1: {}, b2: {}, b3: {} };
+let timerInterval = null;
+let timeRemaining = 300;
+let isTimerRunning = false;
+function rollQuestions() {
+const currentSelected = document.getElementById('current-lesson').value;
+const currentIndex = lessonSequence.indexOf(currentSelected);
+// 1. Calculate Last Lesson Box
+let lastLessonTopic = "";
+if (currentIndex > 0) {
+lastLessonTopic = lessonSequence[currentIndex - 1];
+} else {
+lastLessonTopic = "7-1-6";
+}
+document.getElementById('tag-box1').innerText = Last Lesson (${lastLessonTopic});
+const list1 = curriculum[lastLessonTopic];
+currentData.b1 = list1[Math.floor(Math.random() * list1.length)];
+// 2. Calculate Last Term Box
+let potentialTermTopics = lessonSequence.filter(t => t !== currentSelected && t !== lastLessonTopic);
+if (potentialTermTopics.length === 0) {
+potentialTermTopics = [currentSelected];
+}
+const chosenTermTopic = potentialTermTopics[Math.floor(Math.random() * potentialTermTopics.length)];
+document.getElementById('tag-box2').innerText = Last Term (${chosenTermTopic});
+const list2 = curriculum[chosenTermTopic];
+currentData.b2 = list2[Math.floor(Math.random() * list2.length)];
+// 3. Calculate Year 6 Box
+const list3 = curriculum["Year 6"];
+currentData.b3 = list3[Math.floor(Math.random() * list3.length)];
+// Push into layout HTML
+document.getElementById('q-box1').innerText = currentData.b1.q;
+document.getElementById('q-box2').innerText = currentData.b2.q;
+document.getElementById('q-box3').innerText = currentData.b3.q;
+// Reset covers
+document.querySelectorAll('.card').forEach(card => {
+card.classList.remove('revealed');
+card.querySelector('.answer-box').innerText = "???";
+});
+}
+function toggleReveal(card, slotKey) {
+card.classList.toggle('revealed');
+const isRevealed = card.classList.contains('revealed');
+const answerBox = card.querySelector('.answer-box');
+if (slotKey === 'b1') {
+answerBox.innerText = isRevealed ? currentData.b1.a : "???";
+} else if (slotKey === 'b2') {
+answerBox.innerText = isRevealed ? currentData.b2.a : "???";
+} else if (slotKey === 'b3') {
+answerBox.innerText = isRevealed ? currentData.b3.a : "???";
+}
+}
+function updateTimerDisplay() {
+const minutes = Math.floor(timeRemaining / 60);
+const seconds = timeRemaining % 60;
+document.getElementById('timer-display').innerText =
+${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')};
+}
+function toggleTimer() {
+const btn = document.getElementById('timer-btn');
+if (isTimerRunning) {
+clearInterval(timerInterval);
+btn.innerText = "Start";
+isTimerRunning = false;
+} else {
+timerInterval = setInterval(() => {
+if (timeRemaining > 0) {
+timeRemaining--;
+updateTimerDisplay();
+} else {
+clearInterval(timerInterval);
+btn.innerText = "Start";
+isTimerRunning = false;
+alert("Time is up!");
+}
+}, 1000);
+btn.innerText = "Pause";
+isTimerRunning = true;
+}
+}
+function resetTimer() {
+clearInterval(timerInterval);
+timeRemaining = 300;
+isTimerRunning = false;
+document.getElementById('timer-btn').innerText = "Start";
+updateTimerDisplay();
+}
+window.onload = function() {
+rollQuestions();
+};
 
-        button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
 
-        button:hover {
-            background-color: #2980b9;
-        }
 
-        .timer-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: #edf2f7;
-            padding: 5px 15px;
-            border-radius: 8px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 10px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            min-height: 250px;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border-top: 8px solid var(--accent-color);
-            user-select: none;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .card.last-lesson { border-top-color: var(--lesson-color); }
-        .card.last-term { border-top-color: var(--term-color); }
-        .card.last-year { border-top-color: var(--year-color); }
-
-        .card-tag {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            color: #718096;
-        }
-
-        .card.last-lesson .card-tag { color: var(--lesson-color); }
-        .card.last-term .card-tag { color: var(--term-color); }
-        .card.last-year .card-tag { color: var(--year-color); }
-
-        .question {
-            font-size: 1.4rem;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .answer-box {
-            background: #f7fafc;
-            border: 2px dashed #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #4a5568;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
-        }
-
-        .card.revealed .answer-box {
-            background: #f0fff4;
-            border-color: #9ae6b4;
-            color: #22543d;
-            border-style: solid;
-        }
-
-        .click-hint {
-            font-size: 0.8rem;
-            color: #a0aec0;
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Do Now</h1>
-
-    <div class="controls">
-        <label for="current-lesson">Current Lesson:</label>
-        <select id="current-lesson" onchange="rollQuestions()">
-            <option value="7-1-1">7-1-1</option>
-            <option value="7-1-2">7-1-2</option>
-            <option value="7-1-3">7-1-3</option>
-            <option value="7-1-4">7-1-4</option>
-            <option value="7-1-5" selected>7-1-5</option>
-            <option value="7-1-6">7-1-6</option>
-        </select>
-
-        <button onclick="rollQuestions()">Roll Questions</button>
-
-        <div class="timer-container">
-            ⏱️ <span id="timer-display">05:00</span>
-            <button id="timer-btn" onclick="toggleTimer()">Start</button>
-            <button onclick="resetTimer()">Reset</button>
-        </div>
-    </div>
-
-    <div class="grid">
-        <!-- Box 1 -->
-        <div class="card last-lesson" onclick="toggleReveal(this, 'b1')">
-            <div class="card-tag" id="tag-box1">Last Lesson</div>
-            <div class="question" id="q-box1">Loading...</div>
-            <div class="answer-box" id="a-box1">???</div>
-            <div class="click-hint">Click box to reveal answer</div>
-        </div>
-
-        <!-- Box 2 -->
-        <div class="card last-term" onclick="toggleReveal(this, 'b2')">
-            <div class="card-tag" id="tag-box2">Last Term</div>
-            <div class="question" id="q-box2">Loading...</div>
-            <div class="answer-box" id="a-box2">???</div>
-            <div class="click-hint">Click box to reveal answer</div>
-        </div>
-
-        <!-- Box 3 -->
-        <div class="card last-year" onclick="toggleReveal(this, 'b3')">
-            <div class="card-tag">Year 6 Recap</div>
-            <div class="question" id="q-box3">Loading...</div>
-            <div class="answer-box" id="a-box3">???</div>
-            <div class="click-hint">Click box to reveal answer</div>
-        </div>
-    </div>
-
-    <script>
-        const lessonSequence = ["7-1-1", "7-1-2", "7-1-3", "7-1-4", "7-1-5", "7-1-6"];
-
-        const curriculum = {
-            "Year 6": [
-                // Buddhism
-                { q: "Who founded Buddhism?", a: "Siddhartha Gautama (the Buddha)." },
-                { q: "What is the key symbol of Buddhism that represents the path to enlightenment?", a: "The Eight-Spoked Wheel (Dharmachakra)." },
-                { q: "What do Buddhists call the state of perfect peace and freedom from suffering?", a: "Nirvana." },
-                { q: "Where do Buddhists go to worship and meditate?", a: "A Temple, Vihara, or Stupa." },
-                { q: "What is the key teaching in Buddhism about why life involves suffering?", a: "The Four Noble Truths." },
-                // Christianity
-                { q: "Who do Christians believe is the Son of God and Saviour of humanity?", a: "Jesus Christ." },
-                { q: "What is the holy book used by Christians?", a: "The Bible." },
-                { q: "Name the core Christian belief that God exists as three persons: Father, Son, and Holy Spirit.", a: "The Trinity." },
-                { q: "What is the main place of worship for Christians?", a: "A Church." },
-                { q: "Which major Christian festival celebrates the resurrection of Jesus?", a: "Easter." },
-                // Hinduism
-                { q: "What do Hindus call the continuous cycle of birth, death, and rebirth?", a: "Samsara." },
-                { q: "What is the ultimate goal in Hinduism, which means freeing the soul from rebirth?", a: "Moksha." },
-                { q: "What is the Hindu rule of cause and effect, where your actions affect your future life?", a: "Karma." },
-                { q: "What is the name for a Hindu place of worship?", a: "A Mandir (or Temple)." },
-                { q: "Name the ancient, sacred holy texts used in Hinduism.", a: "The Vedas." },
-                // Islam
-                { q: "What is the name of the one God in Islam?", a: "Allah." },
-                { q: "Who do Muslims believe is the final prophet of God?", a: "Muhammad." },
-                { q: "What is the holy book of Islam?", a: "The Qur'an." },
-                { q: "What is the name for a Muslim place of worship?", a: "A Mosque (Masjid)." },
-                { q: "What do we call the five core duties that every Muslim should follow?", a: "The Five Pillars of Islam." },
-                // Judaism
-                { q: "What is the name of the sacred agreement God made with Abraham in Judaism?", a: "The Covenant." },
-                { q: "What is the primary holy text and scroll used in Judaism?", a: "The Torah." },
-                { q: "What is the name for a Jewish place of worship?", a: "A Synagogue." },
-                { q: "What do we call the collection of moral laws given to Moses on Mount Sinai?", a: "The Ten Commandments." },
-                { q: "What is the name of the Jewish weekly day of rest and spiritual focus?", a: "Shabbat (Sabbath)." },
-                // Sikhism
-                { q: "Who was the founder of Sikhism?", a: "Guru Nanak." },
-                { q: "What is the name of the living eternal holy book and Guru in Sikhism?", a: "The Guru Granth Sahib." },
-                { q: "What is the name for a Sikh place of worship?", a: "A Gurdwara." },
