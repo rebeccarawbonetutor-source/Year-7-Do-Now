@@ -1,1 +1,358 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Do Now Grid</title><style>:root {--bg-color: #f4f6f9;--card-bg: #ffffff;--text-color: #2c3e50;--accent-color: #3498db;--lesson-color: #e67e22;--term-color: #9b59b6;--year-color: #2ecc71;--border-radius: 12px;}body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background-color: var(--bg-color);color: var(--text-color);margin: 0;padding: 20px;display: flex;flex-direction: column;align-items: center;min-height: 100vh;}h1 {font-size: 2.5rem;margin-bottom: 10px;text-align: center;}.controls {display: flex;gap: 15px;margin-bottom: 25px;flex-wrap: wrap;justify-content: center;align-items: center;background: var(--card-bg);padding: 15px 25px;border-radius: var(--border-radius);box-shadow: 0 4px 6px rgba(0,0,0,0.05);}label {font-weight: 600;}select, button {font-size: 1rem;padding: 8px 16px;border-radius: 6px;border: 1px solid #ccc;background: white;cursor: pointer;}button {background-color: var(--accent-color);color: white;border: none;font-weight: bold;transition: background 0.2s;}button:hover {background-color: #2980b9;}.timer-container {display: flex;align-items: center;gap: 10px;font-size: 1.5rem;font-weight: bold;background: #edf2f7;padding: 5px 15px;border-radius: 8px;}.grid {display: grid;grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));gap: 20px;width: 100%;max-width: 1200px;margin-top: 10px;}.card {background: var(--card-bg);border-radius: var(--border-radius);box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);padding: 25px;display: flex;flex-direction: column;min-height: 250px;cursor: pointer;position: relative;transition: transform 0.2s, box-shadow 0.2s;border-top: 8px solid var(--accent-color);user-select: none;}.card:hover {transform: translateY(-5px);box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);}.card.last-lesson { border-top-color: var(--lesson-color); }.card.last-term { border-top-color: var(--term-color); }.card.last-year { border-top-color: var(--year-color); }.card-tag {font-size: 0.9rem;text-transform: uppercase;font-weight: bold;letter-spacing: 1px;margin-bottom: 15px;color: #718096;}.card.last-lesson .card-tag { color: var(--lesson-color); }.card.last-term .card-tag { color: var(--term-color); }.card.last-year .card-tag { color: var(--year-color); }.question {font-size: 1.4rem;font-weight: 600;line-height: 1.4;margin-bottom: 20px;flex-grow: 1;}.answer-box {background: #f7fafc;border: 2px dashed #e2e8f0;border-radius: 8px;padding: 15px;font-size: 1.2rem;font-weight: 500;color: #4a5568;text-align: center;display: flex;align-items: center;justify-content: center;min-height: 60px;}.card.revealed .answer-box {background: #f0fff4;border-color: #9ae6b4;color: #22543d;border-style: solid;}.click-hint {font-size: 0.8rem;color: #a0aec0;text-align: center;margin-top: 10px;}</style></head><body><h1>Do Now</h1><div class="controls"><label for="current-lesson">Current Lesson:</label><select id="current-lesson" onchange="rollQuestions()"><option value="7-1-1">7-1-1</option><option value="7-1-2">7-1-2</option><option value="7-1-3">7-1-3</option><option value="7-1-4">7-1-4</option><option value="7-1-5" selected>7-1-5</option><option value="7-1-6">7-1-6</option></select><button onclick="rollQuestions()">Roll Questions</button><div class="timer-container">⏱️ <span id="timer-display">05:00</span><button id="timer-btn" onclick="toggleTimer()">Start</button><button onclick="resetTimer()">Reset</button></div></div><div class="grid"><!-- Box 1 --><div class="card last-lesson" onclick="toggleReveal(this, 'b1')"><div class="card-tag" id="tag-box1">Last Lesson</div><div class="question" id="q-box1">Loading...</div><div class="answer-box" id="a-box1">???</div><div class="click-hint">Click box to reveal answer</div></div><!-- Box 2 --><div class="card last-term" onclick="toggleReveal(this, 'b2')"><div class="card-tag" id="tag-box2">Last Term</div><div class="question" id="q-box2">Loading...</div><div class="answer-box" id="a-box2">???</div><div class="click-hint">Click box to reveal answer</div></div><!-- Box 3 --><div class="card last-year" onclick="toggleReveal(this, 'b3')"><div class="card-tag">Year 6 Recap</div><div class="question" id="q-box3">Loading...</div><div class="answer-box" id="a-box3">???</div><div class="click-hint">Click box to reveal answer</div></div></div><script>const lessonSequence = ["7-1-1", "7-1-2", "7-1-3", "7-1-4", "7-1-5", "7-1-6"];const curriculum = {"7-1-1": [{ q: "What is the capital of the UK?", a: "London" },{ q: "What is 5 + 7?", a: "12" }],"7-1-2": [{ q: "Name a primary color.", a: "Red, Yellow, or Blue" },{ q: "What do trees produce that humans need to breathe?", a: "Oxygen" }],"7-1-3": [{ q: "How many days are in a leap year?", a: "366" },{ q: "What is the opposite of 'hot'?", a: "Cold" }],"7-1-4": [{ q: "What is the largest ocean on Earth?", a: "Pacific Ocean" },{ q: "What gas do humans exhale?", a: "Carbon Dioxide" }],"7-1-5": [{ q: "What shape has 5 sides?", a: "Pentagon" },{ q: "Which planet is closest to the Sun?", a: "Mercury" }],"7-1-6": [{ q: "What is the square root of 64?", a: "8" },{ q: "Who wrote 'Romeo and Juliet'?", a: "William Shakespeare" }],"Year 6": [{ q: "Who founded Buddhism?", a: "Siddhartha Gautama (the Buddha)." },{ q: "What is the key symbol of Buddhism?", a: "The Eight-Spoked Wheel." },{ q: "What do Buddhists call the state of perfect peace?", a: "Nirvana." },{ q: "Where do Buddhists go to worship?", a: "A Temple, Vihara, or Stupa." },{ q: "What is the key teaching about why life involves suffering?", a: "The Four Noble Truths." }]};let currentAnswers = { b1: "", b2: "", b3: "" };let timerInterval = null;let timeRemaining = 300;function getRandomElement(arr) {if (!arr || arr.length === 0) return { q: "No questions available", a: "N/A" };return arr[Math.floor(Math.random() * arr.length)];}function rollQuestions() {const currentLesson = document.getElementById("current-lesson").value;const currentIndex = lessonSequence.indexOf(currentLesson);let lastLessonPool = [];let lastTermPool = [];let year6Pool = curriculum["Year 6"] || [];if (currentIndex > 0) {const lastLessonKey = lessonSequence[currentIndex - 1];lastLessonPool = curriculum[lastLessonKey] || [];document.getElementById("tag-box1").innerText = Last Lesson (${lastLessonKey});} else {document.getElementById("tag-box1").innerText = "Last Lesson";}for (let i = 0; i < currentIndex - 1; i++) {const lessonKey = lessonSequence[i];if (curriculum[lessonKey]) {lastTermPool = lastTermPool.concat(curriculum[lessonKey]);}}const item1 = getRandomElement(lastLessonPool.length > 0 ? lastLessonPool : year6Pool);const item2 = getRandomElement(lastTermPool.length > 0 ? lastTermPool : year6Pool);const item3 = getRandomElement(year6Pool);document.getElementById("q-box1").innerText = item1.q;document.getElementById("q-box2").innerText = item2.q;document.getElementById("q-box3").innerText = item3.q;currentAnswers.b1 = item1.a;currentAnswers.b2 = item2.a;currentAnswers.b3 = item3.a;document.querySelectorAll('.card').forEach(card => {card.classList.remove('revealed');});document.getElementById("a-box1").innerText = "???";document.getElementById("a-box2").innerText = "???";document.getElementById("a-box3").innerText = "???";}function toggleReveal(cardElement, boxKey) {if (!cardElement.classList.contains('revealed')) {cardElement.classList.add('revealed');document.getElementById(a-${boxKey}).innerText = currentAnswers[boxKey];} else {cardElement.classList.remove('revealed');document.getElementById(a-${boxKey}).innerText = "???";}}function updateTimerDisplay() {const minutes = Math.floor(timeRemaining / 60).toString().padStart(2, '0');const seconds = (timeRemaining % 60).toString().padStart(2, '0');document.getElementById("timer-display").innerText = ${minutes}:${seconds};}function toggleTimer() {const btn = document.getElementById("timer-btn");if (timerInterval) {clearInterval(timerInterval);timerInterval = null;btn.innerText = "Start";} else {btn.innerText = "Pause";timerInterval = setInterval(() => {if (timeRemaining > 0) {timeRemaining--;updateTimerDisplay();} else {clearInterval(timerInterval);timerInterval = null;btn.innerText = "Start";alert("Time is up!");}}, 1000);}}function resetTimer() {clearInterval(timerInterval);timerInterval = null;timeRemaining = 300;updateTimerDisplay();document.getElementById("timer-btn").innerText = "Start";}window.onload = function() {rollQuestions();};</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do Now</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#FDFBF7] text-stone-900 min-h-screen flex flex-col justify-between selection:bg-amber-200 selection:text-stone-900">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-8 py-6 flex flex-col xl:flex-row justify-between items-center gap-6">
+            
+            <!-- Left Group: Lesson Dropdown on top, Timer directly underneath -->
+            <div class="flex flex-col items-start gap-3 w-full xl:w-auto">
+                <div class="flex items-center gap-3 bg-stone-50 border border-stone-300 px-4 py-3 rounded-2xl shadow-inner w-full xl:w-auto justify-between">
+                    <label for="currentLessonSelect" class="text-base font-semibold text-stone-700 whitespace-nowrap">Current Lesson:</label>
+                    <select id="currentLessonSelect" onchange="onCurrentLessonChange()" class="bg-transparent text-lg font-bold text-stone-900 focus:outline-none cursor-pointer">
+                        <option value="7-1-1">Lesson 7-1-1</option>
+                        <option value="7-1-2">Lesson 7-1-2</option>
+                        <option value="7-1-3">Lesson 7-1-3</option>
+                        <option value="7-1-4">Lesson 7-1-4</option>
+                        <option value="7-1-5">Lesson 7-1-5</option>
+                        <option value="7-1-6" selected>Lesson 7-1-6</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center gap-4 bg-stone-50 border border-stone-300 px-6 py-3 rounded-2xl shadow-sm w-full xl:w-auto justify-between">
+                    <span id="timerDisplay" class="text-3xl lg:text-4xl font-extrabold text-stone-900 w-32 text-center">05:00</span>
+                    <div class="flex gap-2">
+                        <button onclick="startTimer()" class="bg-stone-200 hover:bg-stone-300 text-stone-900 text-sm px-4 py-2.5 rounded-xl transition cursor-pointer font-bold">Start</button>
+                        <button onclick="resetTimer()" class="bg-stone-200 hover:bg-stone-300 text-stone-900 text-sm px-4 py-2.5 rounded-xl transition cursor-pointer font-bold">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Title: Aligned inline with the timer block on the left -->
+            <div class="text-center xl:self-end xl:pb-3">
+                <h1 class="text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-900 whitespace-nowrap">Do Now</h1>
+            </div>
+            
+            <!-- Right: Date at the top -->
+            <div class="flex flex-col items-center xl:items-end w-full xl:w-auto xl:self-start">
+                <div id="currentDateDisplay" class="text-2xl lg:text-3xl font-extrabold text-stone-900 bg-stone-50 border border-stone-300 px-6 py-3 rounded-2xl shadow-sm text-center">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content: Three Question Boxes Displayed Simultaneously -->
+    <main class="max-w-7xl mx-auto px-6 py-10 flex-grow w-full flex items-center">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+            
+            <!-- BOX 1: 1. Last lesson -->
+            <div id="card-box1" class="bg-white border-2 border-emerald-600 rounded-3xl shadow-lg p-8 flex flex-col justify-between transition-all hover:shadow-xl min-h-[460px]">
+                <div>
+                    <div class="flex justify-between items-center mb-6 pb-3 border-b-2 border-emerald-100">
+                        <h2 class="text-2xl font-extrabold text-emerald-800">1. Last lesson</h2>
+                        <button onclick="nextQuestion('box1')" class="text-xs font-semibold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 rounded-lg transition cursor-pointer">New Question ↻</button>
+                    </div>
+                    <p id="q-box1" class="text-stone-900 text-2xl font-bold leading-relaxed mb-8">Loading question...</p>
+                    
+                    <div id="ans-container-box1" class="hidden mb-6 bg-emerald-50/70 border border-emerald-300 rounded-2xl p-5">
+                        <span class="text-xs font-extrabold text-emerald-900 uppercase tracking-wide block mb-1.5">Answer</span>
+                        <p id="a-box1" class="text-stone-900 text-xl font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-stone-100">
+                    <button onclick="toggleAnswer('box1')" id="btn-reveal-box1" class="w-full bg-white hover:bg-emerald-50 text-emerald-800 border-2 border-emerald-700 font-bold py-3.5 px-6 rounded-2xl transition shadow-sm cursor-pointer text-lg">
+                        Reveal Answer
+                    </button>
+                </div>
+            </div>
+
+            <!-- BOX 2: 2. Last term -->
+            <div id="card-box2" class="bg-white border-2 border-amber-600 rounded-3xl shadow-lg p-8 flex flex-col justify-between transition-all hover:shadow-xl min-h-[460px]">
+                <div>
+                    <div class="flex justify-between items-center mb-6 pb-3 border-b-2 border-amber-100">
+                        <h2 class="text-2xl font-extrabold text-amber-800">2. Last term</h2>
+                        <button onclick="nextQuestion('box2')" class="text-xs font-semibold text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-3.5 py-1.5 rounded-lg transition cursor-pointer">New Question ↻</button>
+                    </div>
+                    <p id="q-box2" class="text-stone-900 text-2xl font-bold leading-relaxed mb-8">Loading question...</p>
+                    
+                    <div id="ans-container-box2" class="hidden mb-6 bg-amber-50/70 border border-amber-300 rounded-2xl p-5">
+                        <span class="text-xs font-extrabold text-amber-900 uppercase tracking-wide block mb-1.5">Answer</span>
+                        <p id="a-box2" class="text-stone-900 text-xl font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-stone-100">
+                    <button onclick="toggleAnswer('box2')" id="btn-reveal-box2" class="w-full bg-white hover:bg-amber-50 text-amber-800 border-2 border-amber-700 font-bold py-3.5 px-6 rounded-2xl transition shadow-sm cursor-pointer text-lg">
+                        Reveal Answer
+                    </button>
+                </div>
+            </div>
+
+            <!-- BOX 3: 3. Last year -->
+            <div id="card-box3" class="bg-white border-2 border-sky-700 rounded-3xl shadow-lg p-8 flex flex-col justify-between transition-all hover:shadow-xl min-h-[460px]">
+                <div>
+                    <div class="flex justify-between items-center mb-6 pb-3 border-b-2 border-sky-100">
+                        <h2 class="text-2xl font-extrabold text-sky-900">3. Last year</h2>
+                        <button onclick="nextQuestion('box3')" class="text-xs font-semibold text-sky-800 hover:text-sky-950 bg-sky-50 hover:bg-sky-100 px-3.5 py-1.5 rounded-lg transition cursor-pointer">New Question ↻</button>
+                    </div>
+                    <p id="q-box3" class="text-stone-900 text-2xl font-bold leading-relaxed mb-8">Loading question...</p>
+                    
+                    <div id="ans-container-box3" class="hidden mb-6 bg-sky-50/70 border border-sky-300 rounded-2xl p-5">
+                        <span class="text-xs font-extrabold text-sky-900 uppercase tracking-wide block mb-1.5">Answer</span>
+                        <p id="a-box3" class="text-stone-900 text-xl font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-stone-100">
+                    <button onclick="toggleAnswer('box3')" id="btn-reveal-box3" class="w-full bg-white hover:bg-sky-50 text-sky-900 border-2 border-sky-800 font-bold py-3.5 px-6 rounded-2xl transition shadow-sm cursor-pointer text-lg">
+                        Reveal Answer
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-stone-200 py-5 text-center text-sm font-medium text-stone-500">
+        Do Now &bull; GitHub Pages Ready
+    </footer>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const todayStr = new Date().toLocaleDateString('en-GB', options);
+        document.getElementById('currentDateDisplay').textContent = todayStr;
+
+        let timeLeft = 300;
+        let timerId = null;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerId !== null) return;
+            timerId = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerId);
+                    timerId = null;
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            timeLeft = 300;
+            updateTimerDisplay();
+        }
+
+        updateTimerDisplay();
+
+        const questionData = [
+            // --- Lesson 7-1-1 ---
+            { lesson: "7-1-1", q: "What is a worldview?", a: "A way of thinking about, interpreting, and responding to the world." },
+            { lesson: "7-1-1", q: "What are ultimate questions?", a: "Big questions about meaning, purpose, or reality." },
+            { lesson: "7-1-1", q: "What is animism?", a: "The belief that everything has a spirit, e.g. animals, trees, and rivers." },
+            { lesson: "7-1-1", q: "What is polytheism?", a: "The belief in many gods, each responsible for different aspects of life." },
+            { lesson: "7-1-1", q: "What is atheism?", a: "The belief that there are no gods." },
+
+            // --- Lesson 7-1-2 ---
+            { lesson: "7-1-2", q: "What is a belief?", a: "Something we feel certain is true." },
+            { lesson: "7-1-2", q: "What is justified knowledge?", a: "When we feel certain something is true and can explain why." },
+            { lesson: "7-1-2", q: "What is philosophy?", a: "The love of wisdom and asking deep questions." },
+            { lesson: "7-1-2", q: "What did Socrates mean by 'the unexamined life'?", a: "A life where people accept beliefs without questioning them." },
+            { lesson: "7-1-2", q: "What is Socratic questioning?", a: "Asking probing questions to test what people claim to know." },
+
+            // --- Lesson 7-1-3 ---
+            { lesson: "7-1-3", q: "What did Plato think about our physical senses (like sight and touch)?", a: "They are unreliable and cannot give us true knowledge." },
+            { lesson: "7-1-3", q: "In Plato's Allegory of the Cave, what do the shadows on the wall represent?", a: "A fake reality or illusion." },
+            { lesson: "7-1-3", q: "According to Plato, how do we find true reality instead of using our eyes?", a: "By using our mind and thinking deeply." },
+            { lesson: "7-1-3", q: "Why can we recognise things like beauty or fairness in the world?", a: "Because our minds already have built-in, perfect ideas of them." },
+            { lesson: "7-1-3", q: "How do we know what a dog is when we see one, according to Plato?", a: "Because our mind holds the perfect, unchangeable idea of a dog." },
+
+            // --- Lesson 7-1-4 ---
+            { lesson: "7-1-4", q: "Who believed we gain true knowledge by using our physical senses to observe the world?", a: "Aristotle." },
+            { lesson: "7-1-4", q: "According to Aristotle, can we trust our physical senses?", a: "Yes, because our senses give us true information about the physical world." },
+            { lesson: "7-1-4", q: "According to Aristotle, using multiple senses together to check what is real is called...", a: "Common sense." },
+            { lesson: "7-1-4", q: "According to Aristotle, if your eyes make a straw look bent in water, what should you do to check?", a: "Check with another sense, like touching it with your fingers." },
+            { lesson: "7-1-4", q: "According to Aristotle, the reason the straw looks bent in water is that our mind rushes to a false conclusion based on our eyes accurately reporting what...", a: "Light looks like through water." },
+
+            // --- Lesson 7-1-5 ---
+            { lesson: "7-1-5", q: "Why did Socrates keep asking people questions about their beliefs?", a: "Until they realised their views were built on unexamined assumptions." },
+            { lesson: "7-1-5", q: "How did Socrates challenge people who claimed a god made the universe?", a: "By asking them to define what a 'god' is and how they can prove it." },
+            { lesson: "7-1-5", q: "What did Socrates believe most people acted out of when they repeat ideas without understanding them?", a: "Ignorance." },
+            { lesson: "7-1-5", q: "According to Plato, where must we look to investigate ultimate questions and worldviews?", a: "Beyond the physical world." },
+            { lesson: "7-1-5", q: "What tool did Plato argue we must use to investigate worldviews?", a: "Reason." },
+            { lesson: "7-1-5", q: "According to Aristotle, where must we look to support any worldview?", a: "To the natural world." },
+            { lesson: "7-1-5", q: "What kind of proof did Aristotle argue we need to support a worldview?", a: "Observable evidence." },
+
+            // --- Lesson 7-1-6 ---
+            { lesson: "7-1-6", q: "According to Socrates, what is the first step we must take to answer ultimate questions?", a: "We must examine life and question our beliefs rather than just accepting them." },
+            { lesson: "7-1-6", q: "How did Socrates believe we should treat our existing beliefs when exploring ultimate questions?", a: "We should actively question them to test our ideas." },
+            { lesson: "7-1-6", q: "According to Plato, how should we answer ultimate questions instead of trusting our physical senses?", a: "By using our reason and thinking deeply to access true knowledge within us." },
+            { lesson: "7-1-6", q: "What did Plato argue about the reliability of our physical senses when trying to find answers?", a: "He argued our senses are an unreliable source of truth." },
+            { lesson: "7-1-6", q: "According to Aristotle, how should we answer ultimate questions about the world?", a: "By gaining true knowledge through our physical senses." },
+            { lesson: "7-1-6", q: "What method did Aristotle argue we must rely on to find answers?", a: "Observing the natural world using our senses." },
+
+            // --- Last Year Pool (Religions & Humanism) ---
+            { lesson: "Last Year", q: "What is the holy book of Christianity called?", a: "The Bible." },
+            { lesson: "Last Year", q: "Who is the central figure and founder of Christianity?", a: "Jesus Christ." },
+            { lesson: "Last Year", q: "What major event in Jesus' life is celebrated at Easter?", a: "The resurrection." },
+            { lesson: "Last Year", q: "What do Christians call the belief in one God who is Father, Son, and Holy Spirit?", a: "The Trinity." },
+            { lesson: "Last Year", q: "What is the building where Christians worship called?", a: "A church." },
+            { lesson: "Last Year", q: "What is the holy book of Islam called?", a: "The Qur'an." },
+            { lesson: "Last Year", q: "Who is considered the final prophet in Islam?", a: "Prophet Muhammad." },
+            { lesson: "Last Year", q: "What is the Arabic word for God in Islam?", a: "Allah." },
+            { lesson: "Last Year", q: "During which holy month do Muslims fast from dawn to sunset?", a: "Ramadan." },
+            { lesson: "Last Year", q: "What is the building where Muslims worship called?", a: "A mosque." },
+            { lesson: "Last Year", q: "What is the supreme spirit or soul in Hinduism called?", a: "Brahman." },
+            { lesson: "Last Year", q: "What concept describes the cycle of birth, death, and rebirth?", a: "Samsara (Reincarnation)." },
+            { lesson: "Last Year", q: "What principle means that actions have consequences in this life or the next?", a: "Karma." },
+            { lesson: "Last Year", q: "What is the festival of lights celebrated in Hinduism called?", a: "Diwali." },
+            { lesson: "Last Year", q: "Where do Hindus traditionally worship at home or in shrines?", a: "A Mandir (temple) or home shrine." },
+            { lesson: "Last Year", q: "Who founded Buddhism after achieving enlightenment?", a: "Siddhartha Gautama (the Buddha)." },
+            { lesson: "Last Year", q: "What are the core teachings on how to end suffering called?", a: "The Four Noble Truths." },
+            { lesson: "Last Year", q: "What is the path between luxury and hardship called in Buddhism?", a: "The Middle Way." },
+            { lesson: "Last Year", q: "What state of ultimate peace and liberation do Buddhists aim to reach?", a: "Nirvana." },
+            { lesson: "Last Year", q: "Where do Buddhists practice meditation and worship?", a: "A monastery, temple, or Vihara." },
+            { lesson: "Last Year", q: "Who was the founder and first Guru of Sikhism?", a: "Guru Nanak." },
+            { lesson: "Last Year", q: "What is the holy scripture of Sikhism called?", a: "Guru Granth Sahib." },
+            { lesson: "Last Year", q: "What is the name of the Sikh community kitchen where everyone eats together for free?", a: "Langar." },
+            { lesson: "Last Year", q: "What are the five physical symbols of faith worn by initiated Sikhs called?", a: "The Five Ks." },
+            { lesson: "Last Year", q: "What is the building where Sikhs gather for worship called?", a: "A Gurdwara." },
+            { lesson: "Last Year", q: "What is the holy book of Judaism called?", a: "The Torah." },
+            { lesson: "Last Year", q: "Who made a covenant with God and is considered the patriarch of Judaism?", a: "Abraham (or Moses)." },
+            { lesson: "Last Year", q: "What weekly day of rest and holiness do Jewish people observe from Friday to Saturday sunset?", a: "Shabbat." },
+            { lesson: "Last Year", q: "What festival commemorates the Israelites' liberation from slavery in Egypt?", a: "Passover (Pesach)." },
+            { lesson: "Last Year", q: "What is the building where Jewish people worship called?", a: "A synagogue." },
+            { lesson: "Last Year", q: "Do Humanists believe in a god or higher power?", a: "No, Humanism is a non-religious worldview." },
+            { lesson: "Last Year", q: "Where do Humanists believe our morals and values come from?", a: "Empathy, reason, and human experience." },
+            { lesson: "Last Year", q: "According to Humanists, what should we focus on since this is the only life we have?", a: "Making this life matter and helping others." },
+            { lesson: "Last Year", q: "How do Humanists prefer to test and understand claims about the world?", a: "Using science, evidence, and reason rather than faith." },
+            { lesson: "Last Year", q: "What do Humanists value instead of religious authority to guide ethical decisions?", a: "Human empathy and personal responsibility." }
+        ];
+
+        let state = {
+            box1: { questions: [], index: 0, revealed: false },
+            box2: { questions: [], index: 0, revealed: false },
+            box3: { questions: [], index: 0, revealed: false }
+        };
+
+        function getPreviousLessonCode(currentLesson) {
+            const parts = currentLesson.split('-');
+            if (parts.length === 3) {
+                let unit = parseInt(parts[2]);
+                if (unit > 1) {
+                    return `${parts[0]}-${parts[1]}-${unit - 1}`;
+                }
+            }
+            return currentLesson;
+        }
+
+        function getTwoLessonsAgoOrBeforeCode(currentLesson) {
+            const parts = currentLesson.split('-');
+            if (parts.length === 3) {
+                let unit = parseInt(parts[2]);
+                if (unit > 2) {
+                    return `${parts[0]}-${parts[1]}-${unit - 2}`;
+                } else if (unit === 2) {
+                    return `${parts[0]}-${parts[1]}-1`;
+                }
+            }
+            return '7-1-1';
+        }
+
+        function initBoxes() {
+            const currentLesson = document.getElementById('currentLessonSelect').value;
+            const prevLesson = getPreviousLessonCode(currentLesson);
+            const twoAgoLesson = getTwoLessonsAgoOrBeforeCode(currentLesson);
+
+            state.box1.questions = questionData.filter(q => q.lesson === prevLesson);
+            state.box1.index = 0;
+            state.box1.revealed = false;
+
+            state.box2.questions = questionData.filter(q => q.lesson && q.lesson.startsWith('7-1-') && q.lesson <= twoAgoLesson);
+            state.box2.index = 0;
+            state.box2.revealed = false;
+
+            state.box3.questions = questionData.filter(q => q.lesson === 'Last Year');
+            state.box3.index = 0;
+            state.box3.revealed = false;
+
+            renderBox('box1');
+            renderBox('box2');
+            renderBox('box3');
+        }
+
+        function renderBox(boxId) {
+            const boxState = state[boxId];
+            const qEl = document.getElementById(`q-${boxId}`);
+            const aEl = document.getElementById(`a-${boxId}`);
+            const ansContainer = document.getElementById(`ans-container-${boxId}`);
+            const btnReveal = document.getElementById(`btn-reveal-${boxId}`);
+
+            if (boxState.questions.length === 0) {
+                qEl.textContent = "No questions available.";
+                aEl.textContent = "";
+                return;
+            }
+
+            const current = boxState.questions[boxState.index];
+            qEl.textContent = current.q;
+            aEl.textContent = current.a;
+
+            if (boxState.revealed) {
+                ansContainer.classList.remove('hidden');
+                btnReveal.textContent = 'Hide Answer';
+            } else {
+                ansContainer.classList.add('hidden');
+                btnReveal.textContent = 'Reveal Answer';
+            }
+        }
+
+        function toggleAnswer(boxId) {
+            state[boxId].revealed = !state[boxId].revealed;
+            renderBox(boxId);
+        }
+
+        function nextQuestion(boxId) {
+            const boxState = state[boxId];
+            if (boxState.questions.length > 0) {
+                boxState.index = (boxState.index + 1) % boxState.questions.length;
+                boxState.revealed = false;
+                renderBox(boxId);
+            }
+        }
+
+        function onCurrentLessonChange() {
+            initBoxes();
+        }
+
+        initBoxes();
+    </script>
+</body>
+</html>
