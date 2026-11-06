@@ -212,15 +212,6 @@
   .card-2 .btn-reveal:hover { background: #fffbeb; }
   .card-3 .btn-reveal:hover { background: #f0f9ff; }
 
-  footer {
-    background: #ffffff;
-    border-top: 1px solid #e7e5e4;
-    padding: 14px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #78716c;
-  }
-
   /* ---------- Print-only area (hidden on screen) ---------- */
   #printArea { display: none; }
 
@@ -238,7 +229,7 @@
       font-size: 11pt;
     }
 
-    header, main, footer { display: none !important; }
+    header, main { display: none !important; }
     #printArea { display: block !important; }
 
     .psheet {
@@ -308,13 +299,6 @@
           <option value="7-1-5">Lesson 7-1-5</option>
           <option value="7-1-6">Lesson 7-1-6</option>
           <option value="7-2-1" selected>Lesson 7-2-1</option>
-        </select>
-      </div>
-      <div class="control-box">
-        <label for="printCopies">Print copies:</label>
-        <select id="printCopies" onchange="renderPrintArea()">
-          <option value="2" selected>2 per page</option>
-          <option value="1">1 per page</option>
         </select>
       </div>
       <div class="control-box">
@@ -388,8 +372,6 @@
 
   </div>
 </main>
-
-<footer>Do Now &bull; Year 7 Philosophy</footer>
 
 <!-- Two cut-down copies per A4 side are built here at print time -->
 <div id="printArea" aria-hidden="true"></div>
@@ -577,7 +559,7 @@
     renderPrintArea();
   }
 
-  /* ---------------- Print copies ---------------- */
+  /* ---------------- Print copies: always two per A4 side ---------------- */
   function escapeHTML(str) {
     return String(str)
       .replace(/&/g, '&amp;')
@@ -605,11 +587,8 @@
   }
 
   function renderPrintArea() {
-    const select = document.getElementById('printCopies');
-    const copies = select ? parseInt(select.value, 10) || 2 : 2;
     const cut = '<div class="cut"><span>CUT HERE</span></div>';
-    document.getElementById('printArea').innerHTML =
-      copies === 2 ? buildSheet() + cut + buildSheet() : buildSheet();
+    document.getElementById('printArea').innerHTML = buildSheet() + cut + buildSheet();
   }
 
   /* ---------------- Date ---------------- */
