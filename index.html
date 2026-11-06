@@ -215,9 +215,11 @@
   /* ---------- Print-only area (hidden on screen) ---------- */
   #printArea { display: none; }
 
-  /* Two identical copies per A4 side, split across the middle */
+  /* Two identical copies per A4 side, one above the other.
+     The generous page margin keeps every box clear of the printer's
+     unprintable edge, so nothing gets clipped. */
   @media print {
-    @page { size: A4 portrait; margin: 8mm; }
+    @page { size: A4 portrait; margin: 14mm 12mm; }
 
     html, body {
       background: #ffffff !important;
@@ -233,12 +235,15 @@
     #printArea { display: block !important; }
 
     .psheet {
-      height: 131mm;
+      height: 125mm;
       display: flex;
       flex-direction: column;
       page-break-inside: avoid;
       break-inside: avoid;
+      page-break-after: avoid;
+      break-after: avoid;
     }
+    .psheet + .psheet { margin-top: 12mm; }
 
     .phead {
       display: flex;
@@ -264,23 +269,11 @@
       padding: 3mm;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     .pcard h2 { font-size: 10pt; font-weight: 700; margin: 0 0 1.5mm; line-height: 1.2; }
     .pcard .pq { font-size: 10pt; font-weight: 700; line-height: 1.35; margin: 0; }
     .pwrite { flex: 1; border-top: 1px solid #000000; margin-top: 2.5mm; }
-
-    .cut {
-      display: flex;
-      align-items: center;
-      gap: 3mm;
-      height: 7mm;
-    }
-    .cut::before, .cut::after {
-      content: "";
-      flex: 1;
-      border-top: 1px dashed #000000;
-    }
-    .cut span { font-size: 8pt; font-weight: 700; letter-spacing: 0.08em; }
   }
 </style>
 </head>
@@ -373,7 +366,7 @@
   </div>
 </main>
 
-<!-- Two cut-down copies per A4 side are built here at print time -->
+<!-- Two copies per A4 side are built here at print time -->
 <div id="printArea" aria-hidden="true"></div>
 
 <script>
@@ -587,8 +580,7 @@
   }
 
   function renderPrintArea() {
-    const cut = '<div class="cut"><span>CUT HERE</span></div>';
-    document.getElementById('printArea').innerHTML = buildSheet() + cut + buildSheet();
+    document.getElementById('printArea').innerHTML = buildSheet() + buildSheet();
   }
 
   /* ---------------- Date ---------------- */
