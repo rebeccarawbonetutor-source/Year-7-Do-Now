@@ -20,7 +20,7 @@
     line-height: 1.5;
   }
 
-  /* ---------- Header ---------- */
+  /* ---------- Screen header ---------- */
   header {
     background: #ffffff;
     border-bottom: 1px solid #e7e5e4;
@@ -101,7 +101,7 @@
     white-space: nowrap;
   }
 
-  /* ---------- Cards ---------- */
+  /* ---------- Screen cards ---------- */
   main {
     flex: 1;
     display: flex;
@@ -212,8 +212,6 @@
   .card-2 .btn-reveal:hover { background: #fffbeb; }
   .card-3 .btn-reveal:hover { background: #f0f9ff; }
 
-  .write-space { display: none; }
-
   footer {
     background: #ffffff;
     border-top: 1px solid #e7e5e4;
@@ -223,33 +221,75 @@
     color: #78716c;
   }
 
-  /* ---------- Print: one A4 page, three bordered boxes ---------- */
+  /* ---------- Print-only area (hidden on screen) ---------- */
+  #printArea { display: none; }
+
+  /* Two identical copies per A4 side, split across the middle */
   @media print {
     @page { size: A4 portrait; margin: 8mm; }
-    body { background: #ffffff; color: #000000; min-height: auto; font-size: 11pt; }
-    header { background: #ffffff; border-bottom: none; padding: 0 0 4mm; }
-    .controls, .btn-new, footer, .reveal-row, .answer-box { display: none !important; }
-    .header-inner { align-items: flex-end; }
-    h1 { font-size: 22pt; }
-    #dateDisplay { font-size: 13pt; border: none; background: none; padding: 0; }
-    main { display: block; padding: 0; max-width: none; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; }
-    .card {
-      border: 2px solid #000000 !important;
-      height: 200mm;
-      padding: 5mm;
+
+    html, body {
+      background: #ffffff !important;
+      color: #000000 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      display: block !important;
+      font-size: 11pt;
+    }
+
+    header, main, footer { display: none !important; }
+    #printArea { display: block !important; }
+
+    .psheet {
+      height: 131mm;
+      display: flex;
+      flex-direction: column;
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    .card h2 { font-size: 12pt; color: #000000 !important; }
-    .q { font-size: 12pt; }
-    .card-head { margin-bottom: 3mm; }
-    .write-space {
-      display: block;
-      flex: 1;
-      border-top: 1px solid #000000;
-      margin-top: 4mm;
+
+    .phead {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 1.5mm;
+      margin-bottom: 2.5mm;
     }
+    .phead h1 { font-size: 13pt; font-weight: 700; margin: 0; line-height: 1; }
+    .phead .pdate { font-size: 9pt; font-weight: 700; }
+
+    .pboxes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4mm;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .pcard {
+      border: 1.5px solid #000000;
+      padding: 3mm;
+      display: flex;
+      flex-direction: column;
+    }
+    .pcard h2 { font-size: 10pt; font-weight: 700; margin: 0 0 1.5mm; line-height: 1.2; }
+    .pcard .pq { font-size: 10pt; font-weight: 700; line-height: 1.35; margin: 0; }
+    .pwrite { flex: 1; border-top: 1px solid #000000; margin-top: 2.5mm; }
+
+    .cut {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      height: 7mm;
+    }
+    .cut::before, .cut::after {
+      content: "";
+      flex: 1;
+      border-top: 1px dashed #000000;
+    }
+    .cut span { font-size: 8pt; font-weight: 700; letter-spacing: 0.08em; }
   }
 </style>
 </head>
@@ -268,6 +308,13 @@
           <option value="7-1-5">Lesson 7-1-5</option>
           <option value="7-1-6">Lesson 7-1-6</option>
           <option value="7-2-1" selected>Lesson 7-2-1</option>
+        </select>
+      </div>
+      <div class="control-box">
+        <label for="printCopies">Print copies:</label>
+        <select id="printCopies" onchange="renderPrintArea()">
+          <option value="2" selected>2 per page</option>
+          <option value="1">1 per page</option>
         </select>
       </div>
       <div class="control-box">
@@ -300,7 +347,6 @@
           <p class="a" id="a-box1"></p>
         </div>
       </div>
-      <div class="write-space"></div>
       <div class="reveal-row">
         <button class="btn-reveal" id="btn-reveal-box1" onclick="toggleAnswer('box1')">Reveal answer</button>
       </div>
@@ -318,7 +364,6 @@
           <p class="a" id="a-box2"></p>
         </div>
       </div>
-      <div class="write-space"></div>
       <div class="reveal-row">
         <button class="btn-reveal" id="btn-reveal-box2" onclick="toggleAnswer('box2')">Reveal answer</button>
       </div>
@@ -336,7 +381,6 @@
           <p class="a" id="a-box3"></p>
         </div>
       </div>
-      <div class="write-space"></div>
       <div class="reveal-row">
         <button class="btn-reveal" id="btn-reveal-box3" onclick="toggleAnswer('box3')">Reveal answer</button>
       </div>
@@ -346,6 +390,9 @@
 </main>
 
 <footer>Do Now &bull; Year 7 Philosophy</footer>
+
+<!-- Two cut-down copies per A4 side are built here at print time -->
+<div id="printArea" aria-hidden="true"></div>
 
 <script>
   /* ---------------- Question bank: 6 per lesson ---------------- */
@@ -460,6 +507,12 @@
     box3: { questions: [], index: 0, revealed: false }
   };
 
+  const BOX_LABELS = {
+    box1: '1. Last lesson',
+    box2: '2. Last term',
+    box3: '3. Last year'
+  };
+
   const byLesson = (code) => questionData.filter(q => q.lesson === code);
 
   function initBoxes() {
@@ -485,6 +538,8 @@
       state[id].revealed = false;
       renderBox(id);
     });
+
+    renderPrintArea();
   }
 
   function renderBox(boxId) {
@@ -519,6 +574,42 @@
     s.index = (s.index + 1) % s.questions.length;
     s.revealed = false;
     renderBox(boxId);
+    renderPrintArea();
+  }
+
+  /* ---------------- Print copies ---------------- */
+  function escapeHTML(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function buildSheet() {
+    const date = document.getElementById('dateDisplay').textContent;
+    const cards = ['box1', 'box2', 'box3'].map(id => {
+      const s = state[id];
+      const item = s.questions[s.index];
+      const question = item ? escapeHTML(item.q) : '';
+      return '<div class="pcard">' +
+               '<h2>' + BOX_LABELS[id] + '</h2>' +
+               '<p class="pq">' + question + '</p>' +
+               '<div class="pwrite"></div>' +
+             '</div>';
+    }).join('');
+
+    return '<div class="psheet">' +
+             '<div class="phead"><h1>Do Now</h1><span class="pdate">' + date + '</span></div>' +
+             '<div class="pboxes">' + cards + '</div>' +
+           '</div>';
+  }
+
+  function renderPrintArea() {
+    const select = document.getElementById('printCopies');
+    const copies = select ? parseInt(select.value, 10) || 2 : 2;
+    const cut = '<div class="cut"><span>CUT HERE</span></div>';
+    document.getElementById('printArea').innerHTML =
+      copies === 2 ? buildSheet() + cut + buildSheet() : buildSheet();
   }
 
   /* ---------------- Date ---------------- */
@@ -571,6 +662,13 @@
 
   updateTimerDisplay();
   initBoxes();
+
+  /* Rebuild the print copies just before printing, in case the browser
+     did not pick up a state change made in the last click. */
+  window.addEventListener('beforeprint', renderPrintArea);
+  if (window.matchMedia) {
+    window.matchMedia('print').addEventListener('change', renderPrintArea);
+  }
 </script>
 </body>
 </html>
