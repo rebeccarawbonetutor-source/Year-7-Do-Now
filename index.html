@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+import os
+
+os.makedirs("generated", exist_ok=True)
+
+content = """<!DOCTYPE html>
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
@@ -652,3 +656,9 @@
 </script>
 </body>
 </html>
+"""
+
+with open("generated/do_now_fixed.txt", "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("Saved successfully, length:", len(content))
